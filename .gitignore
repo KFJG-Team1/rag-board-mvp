@@ -1,0 +1,7 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+personal/
+PR_COLLISION_ATLAS_BRIEF.md
