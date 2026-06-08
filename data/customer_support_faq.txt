@@ -796,5 +796,10 @@ Answer: If the price of a product drops within 7 days of your purchase, you may 
 
 ### FAQ 200
 Question: How can I reset my password?
-Answer: To reset your password, click on the 'Forgot Password' link on the login page and follow the instructions to reset your password.
+Answer: To reset your password, click on the 'Forgot Password' link on the login page and follow the instructions to reset your password. Answer: To create an account, click on the 'Sign Up' button on the top right corner of our website and follow the instructions to complete the registration process. To create an account, click on the 'Sign Up' button on the top right corner of our website and follow the instructions to complete the registration process.
+To create an account, click on the 'Sign Up' button on the top right corner of our website and follow the instructions to complete the registration process.
+To create an account, click on the 'Sign Up' button on the top right corner of our website and follow the instructions to complete the registration process.
+To create an account, click on the 'Sign Up' button on the top right corner of our website and follow the instructions to complete the registration process.
+To create an account, click on the 'Sign Up' button on the top right corner of our website and follow the instructions to complete the registration process.
+
 

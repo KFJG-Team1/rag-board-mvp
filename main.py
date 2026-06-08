@@ -43,6 +43,17 @@ splitter = RecursiveCharacterTextSplitter(
 )
 chunks = splitter.split_documents(docs)
 
+# [ 청크 출력 ] >>>>>>>>>>>>>>>>>>>>
+
+# for i, chunk in enumerate(chunks, start=1):
+#     print("=" * 80)
+#     print(f"CHUNK {i}")
+#     print(f"길이: {len(chunk.page_content)}")
+#     print("metadata:", chunk.metadata)
+#     print(chunk.page_content)
+
+# <<<<<<<<<<<<<<<<<<<<[ 청크 출력 ]
+
 # 3. embedding + vector DB 저장
 embeddings = OpenAIEmbeddings()
 vectorstore = Chroma.from_documents(
@@ -55,7 +66,8 @@ vectorstore = Chroma.from_documents(
 retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
 # 5. 질문 검색
-question = "Can I change my address after ordering?"
+question = "What is the most popular item?"
+# question = "Can I change my address after ordering?"
 related_docs = retriever.invoke(question)
 
 context = "\n\n".join(doc.page_content for doc in related_docs)
