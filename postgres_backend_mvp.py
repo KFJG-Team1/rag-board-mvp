@@ -65,12 +65,28 @@ class CustomerRead(BaseModel):
     created_at: datetime
 
 
+class CustomerUpdate(BaseModel):
+    name: str | None = None
+    email: str | None = None
+
+
 def get_db() -> Generator[Session]:
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def get_customer_or_404(customer_id: int, db: Session) -> Customer:
+    customer = db.get(Customer, customer_id)
+    if customer is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Customer not found.",
+        )
+
+    return customer
 
 
 @asynccontextmanager
@@ -87,6 +103,7 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+# C(Create): 새 customer를 DB에 생성합니다.
 @app.post(
     "/customers",
     response_model=CustomerRead,
@@ -115,6 +132,7 @@ def create_customer(
     return customer
 
 
+# R(Read): customer 목록을 DB에서 조회합니다.
 @app.get("/customers", response_model=list[CustomerRead])
 def list_customers(
     limit: int = 20,
@@ -130,16 +148,48 @@ def list_customers(
     )
 
 
+# R(Read): customer 한 명을 DB에서 조회합니다.
 @app.get("/customers/{customer_id}", response_model=CustomerRead)
 def get_customer(
     customer_id: int,
     db: Session = Depends(get_db),
 ) -> Customer:
-    customer = db.get(Customer, customer_id)
-    if customer is None:
+    return get_customer_or_404(customer_id, db)
+
+
+# U(Update): 기존 customer 정보를 DB에서 수정합니다.
+@app.patch("/customers/{customer_id}", response_model=CustomerRead)
+def update_customer(
+    customer_id: int,
+    payload: CustomerUpdate,
+    db: Session = Depends(get_db),
+) -> Customer:
+    customer = get_customer_or_404(customer_id, db)
+
+    if payload.name is not None:
+        customer.name = payload.name.strip()
+    if payload.email is not None:
+        customer.email = payload.email.strip().lower()
+
+    try:
+        db.commit()
+        db.refresh(customer)
+    except IntegrityError:
+        db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Customer not found.",
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Customer email already exists.",
         )
 
     return customer
+
+
+# D(Delete): 기존 customer를 DB에서 삭제합니다.
+@app.delete("/customers/{customer_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_customer(
+    customer_id: int,
+    db: Session = Depends(get_db),
+) -> None:
+    customer = get_customer_or_404(customer_id, db)
+    db.delete(customer)
+    db.commit()
